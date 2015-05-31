@@ -1,11 +1,13 @@
 doctype html
-html
+
+html(lang="en")
   head
-    meta(charset='utf-8')
-    meta(http-equiv='X-UA-Compatible', content='IE=edge')
-    meta(name='viewport', content='width=device-width, initial-scale=1.0')
-    meta(name='csrf-token', content=_csrf)
-    title #{title} - Hackathon Starter
+    meta(charset="utf-8")
+    meta(http-equiv="x-ua-compatible" content="ie=edge")
+    title Hack Start
+    meta(name="description" content="A boilerplate for Node.js web applications.")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    meta(name="csrf-token", content=_csrf)
     link(rel="stylesheet" href="/css/bootstrap.min.css")
   body
     include partials/header
@@ -14,6 +16,5 @@ html
       include partials/flash
       block content
 
-    include partials/footer
-
+    script(src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js")
     script(src="/js/bootstrap.min.js")
