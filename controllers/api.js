@@ -6,7 +6,6 @@ var request = require('request');
 var LastFmNode = require('lastfm').LastFmNode;
 var tumblr = require('tumblr.js');
 var foursquare = require('node-foursquare')({ secrets: secrets.foursquare });
-var Github = require('github-api');
 var Twit = require('twit');
 var stripe = require('stripe')(secrets.stripe.secretKey);
 var twilio = require('twilio')(secrets.twilio.sid, secrets.twilio.token);
@@ -110,24 +109,6 @@ exports.getFacebook = function(req, res, next) {
       friends: results.getMyFriends
     });
   });
-};
-
-/**
- * GET /api/github
- * GitHub API Example.
- */
-exports.getGithub = function(req, res, next) {
-  var token = _.find(req.user.tokens, { kind: 'github' });
-  var github = new Github({ token: token.accessToken });
-  var repo = github.getRepo('sahat', 'requirejs-library');
-  repo.show(function(err, repo) {
-    if (err) return next(err);
-    res.render('api/github', {
-      title: 'GitHub API',
-      repo: repo
-    });
-  });
-
 };
 
 /**
