@@ -455,47 +455,6 @@ exports.getLinkedin = function(req, res, next) {
 };
 
 /**
- * GET /api/instagram
- * Instagram API example.
- */
-exports.getInstagram = function(req, res, next) {
-  var token = _.find(req.user.tokens, { kind: 'instagram' });
-  ig.use({ client_id: secrets.instagram.clientID, client_secret: secrets.instagram.clientSecret });
-  ig.use({ access_token: token.accessToken });
-  async.parallel({
-    searchByUsername: function(done) {
-      ig.user_search('richellemead', function(err, users, limit) {
-        done(err, users);
-      });
-    },
-    searchByUserId: function(done) {
-      ig.user('175948269', function(err, user) {
-        done(err, user);
-      });
-    },
-    popularImages: function(done) {
-      ig.media_popular(function(err, medias) {
-        done(err, medias);
-      });
-    },
-    myRecentMedia: function(done) {
-      ig.user_self_media_recent(function(err, medias, pagination, limit) {
-        done(err, medias);
-      });
-    }
-  }, function(err, results) {
-    if (err) return next(err);
-    res.render('api/instagram', {
-      title: 'Instagram API',
-      usernames: results.searchByUsername,
-      userById: results.searchByUserId,
-      popularImages: results.popularImages,
-      myRecentMedia: results.myRecentMedia
-    });
-  });
-};
-
-/**
  * GET /api/yahoo
  * Yahoo API example.
  */
