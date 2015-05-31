@@ -3,6 +3,7 @@
  */
 
 var bodyParser = require('body-parser');
+var chalk = require('chalk');
 var compress = require('compression');
 var connectMongo = require('connect-mongo');
 var express = require('express');
@@ -17,28 +18,30 @@ var path = require('path');
 var mongoose = require('mongoose');
 var session = require('express-session');
 
-/**
- * Controllers (route handlers).
- */
 var homeController = require('./controllers/home');
 var userController = require('./controllers/user');
 var contactController = require('./controllers/contact');
 
-/**
- * API keys and Passport configuration.
- */
-var secrets = require('./config/secrets');
+var config = require('./config/');
 var passportConf = require('./config/passport');
+
+/**
+ * Create Mongo Store.
+ */
+
+var MongoStore = connectMongo(session);
 
 /**
  * Create Express server.
  */
+
 var app = express();
 
 /**
  * Connect to MongoDB.
  */
-mongoose.connect(secrets.db);
+
+mongoose.connect(config.db);
 mongoose.connection.on('error', function() {
   console.error('MongoDB Connection Error. Please make sure that MongoDB is running.');
 });
@@ -46,8 +49,8 @@ mongoose.connection.on('error', function() {
 /**
  * App configuration.
  */
-var MongoStore = connectMongo(session);
-app.set('port', process.env.PORT || 3000);
+
+app.set('port', config.port);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.use(compress());
