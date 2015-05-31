@@ -3,7 +3,6 @@ var querystring = require('querystring');
 var validator = require('validator');
 var async = require('async');
 var request = require('request');
-var graph = require('fbgraph');
 var LastFmNode = require('lastfm').LastFmNode;
 var tumblr = require('tumblr.js');
 var foursquare = require('node-foursquare')({ secrets: secrets.foursquare });

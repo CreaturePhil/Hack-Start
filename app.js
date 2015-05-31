@@ -8,7 +8,6 @@ var favicon = require('serve-favicon');
 var session = require('express-session');
 var bodyParser = require('body-parser');
 var logger = require('morgan');
-var errorHandler = require('errorhandler');
 var lusca = require('lusca');
 var methodOverride = require('method-override');
 var multer  = require('multer');
@@ -180,11 +179,6 @@ app.get('/auth/venmo', passport.authorize('venmo', { scope: 'make_payments acces
 app.get('/auth/venmo/callback', passport.authorize('venmo', { failureRedirect: '/api' }), function(req, res) {
   res.redirect('/api/venmo');
 });
-
-/**
- * Error Handler.
- */
-app.use(errorHandler());
 
 /**
  * Start Express server.
