@@ -12,7 +12,6 @@ var Twit = require('twit');
 var stripe = require('stripe')(secrets.stripe.secretKey);
 var twilio = require('twilio')(secrets.twilio.sid, secrets.twilio.token);
 var Linkedin = require('node-linkedin')(secrets.linkedin.clientID, secrets.linkedin.clientSecret, secrets.linkedin.callbackURL);
-var clockwork = require('clockwork')({ key: secrets.clockwork.apiKey });
 var paypal = require('paypal-rest-sdk');
 var lob = require('lob')(secrets.lob.apiKey);
 var ig = require('instagram-node').instagram();
@@ -110,25 +109,6 @@ exports.getFacebook = function(req, res, next) {
       title: 'Facebook API',
       me: results.getMe,
       friends: results.getMyFriends
-    });
-  });
-};
-
-/**
- * GET /api/scraping
- * Web scraping example using Cheerio library.
- */
-exports.getScraping = function(req, res, next) {
-  request.get('https://news.ycombinator.com/', function(err, request, body) {
-    if (err) return next(err);
-    var $ = cheerio.load(body);
-    var links = [];
-    $('.title a[href^="http"], a[href^="https"]').each(function() {
-      links.push($(this));
-    });
-    res.render('api/scraping', {
-      title: 'Web Scraping',
-      links: links
     });
   });
 };
@@ -408,33 +388,6 @@ exports.postTwilio = function(req, res, next) {
     if (err) return next(err.message);
     req.flash('success', { msg: 'Text sent to ' + responseData.to + '.'});
     res.redirect('/api/twilio');
-  });
-};
-
-/**
- * GET /api/clockwork
- * Clockwork SMS API example.
- */
-exports.getClockwork = function(req, res) {
-  res.render('api/clockwork', {
-    title: 'Clockwork SMS API'
-  });
-};
-
-/**
- * POST /api/clockwork
- * Send a text message using Clockwork SMS
- */
-exports.postClockwork = function(req, res, next) {
-  var message = {
-    To: req.body.telephone,
-    From: 'Hackathon',
-    Content: 'Hello from the Hackathon Starter'
-  };
-  clockwork.sendSms(message, function(err, responseData) {
-    if (err) return next(err.errDesc);
-    req.flash('success', { msg: 'Text sent to ' + responseData.responses[0].to });
-    res.redirect('/api/clockwork');
   });
 };
 
