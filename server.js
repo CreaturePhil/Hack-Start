@@ -1,23 +1,21 @@
 /**
  * Module dependencies.
  */
-var express = require('express');
-var cookieParser = require('cookie-parser');
-var compress = require('compression');
-var favicon = require('serve-favicon');
-var session = require('express-session');
+
 var bodyParser = require('body-parser');
+var compress = require('compression');
+var connectMongo = require('connect-mongo');
+var express = require('express');
+var expressValidator = require('express-validator');
+var favicon = require('serve-favicon');
+var flash = require('express-flash');
 var logger = require('morgan');
 var lusca = require('lusca');
 var methodOverride = require('method-override');
-var multer  = require('multer');
-
-var MongoStore = require('connect-mongo')(session);
-var flash = require('express-flash');
+var passport = require('passport');
 var path = require('path');
 var mongoose = require('mongoose');
-var passport = require('passport');
-var expressValidator = require('express-validator');
+var session = require('express-session');
 
 /**
  * Controllers (route handlers).
@@ -46,8 +44,9 @@ mongoose.connection.on('error', function() {
 });
 
 /**
- * Express configuration.
+ * App configuration.
  */
+var MongoStore = connectMongo(session);
 app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -56,10 +55,8 @@ app.use(logger('dev'));
 app.use(favicon(path.join(__dirname, 'public/favicon.png')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(multer({ dest: path.join(__dirname, 'uploads') }));
 app.use(expressValidator());
 app.use(methodOverride());
-app.use(cookieParser());
 app.use(session({
   resave: true,
   saveUninitialized: true,
@@ -99,7 +96,6 @@ app.get('/account', passportConf.isAuthenticated, userController.getAccount);
 app.post('/account/profile', passportConf.isAuthenticated, userController.postUpdateProfile);
 app.post('/account/password', passportConf.isAuthenticated, userController.postUpdatePassword);
 app.post('/account/delete', passportConf.isAuthenticated, userController.postDeleteAccount);
-app.get('/account/unlink/:provider', passportConf.isAuthenticated, userController.getOauthUnlink);
 
 /**
  * Start Express server.

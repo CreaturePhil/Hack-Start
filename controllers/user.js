@@ -1,4 +1,3 @@
-var _ = require('lodash');
 var async = require('async');
 var crypto = require('crypto');
 var nodemailer = require('nodemailer');
@@ -171,26 +170,6 @@ exports.postDeleteAccount = function(req, res, next) {
     req.logout();
     req.flash('info', { msg: 'Your account has been deleted.' });
     res.redirect('/');
-  });
-};
-
-/**
- * GET /account/unlink/:provider
- * Unlink OAuth provider.
- */
-exports.getOauthUnlink = function(req, res, next) {
-  var provider = req.params.provider;
-  User.findById(req.user.id, function(err, user) {
-    if (err) return next(err);
-
-    user[provider] = undefined;
-    user.tokens = _.reject(user.tokens, function(token) { return token.kind === provider; });
-
-    user.save(function(err) {
-      if (err) return next(err);
-      req.flash('info', { msg: provider + ' account has been unlinked.' });
-      res.redirect('/account');
-    });
   });
 };
 
