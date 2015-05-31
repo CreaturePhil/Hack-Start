@@ -21,7 +21,6 @@
     "express-session": "^1.11.2",
     "express-validator": "^2.10.0",
     "jade": "^1.10.0",
-    "lastfm": "^0.9.2",
     "less": "^2.5.1",
     "lob": "^3.3.1",
     "lodash": "^3.9.3",
