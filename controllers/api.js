@@ -2,7 +2,6 @@ var secrets = require('../config/secrets');
 var querystring = require('querystring');
 var validator = require('validator');
 var async = require('async');
-var cheerio = require('cheerio');
 var request = require('request');
 var graph = require('fbgraph');
 var LastFmNode = require('lastfm').LastFmNode;
