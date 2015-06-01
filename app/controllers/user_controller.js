@@ -8,7 +8,7 @@ var nodemailer = require('nodemailer');
 var passport = require('passport');
 
 var User = require('../models/User');
-var config = require('../config');
+var config = require('../../config');
 
 module.exports = {
   login: function(req, res) {
