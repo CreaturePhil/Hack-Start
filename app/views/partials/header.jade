@@ -12,6 +12,7 @@
     .collapse.navbar-collapse
       ul.nav.navbar-nav
         li(class=title=='About'?'active':undefined): a(href='/about') About
+        li(class=title=='Protected'?'active':undefined): a(href='/protected') Protected
       ul.nav.navbar-nav.navbar-right
         if !user
           li(class=title=='Log In'?'active':undefined): a(href='/login') Log In
