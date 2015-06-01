@@ -11,12 +11,12 @@ var User = require('../models/User');
 var config = require('../../config');
 
 module.exports = {
-  login: function(req, res) {
+  getLogin: function(req, res) {
     if (req.user) return res.redirect('/');
     res.render('user/login', { title: 'Log In' });
   },
 
-  logIntoAccount: function(req, res, next) {
+  postLogin: function(req, res, next) {
     req.assert('username', 'Only letters and numbers are allow in username.').regexMatch(/^[A-Za-z0-9]*$/);
     req.assert('username', 'Username cannot be more than 30 characters.').len(1, 30);
     req.assert('password', 'Password cannot be blank.').notEmpty();
@@ -42,18 +42,18 @@ module.exports = {
     })(req, res, next);
   },
 
-  logout: function(req, res) {
+  getLogout: function(req, res) {
     req.logout();
     req.flash('success', { msg: 'Success! You are logged out.' });
     res.redirect('/login');
   },
 
-  signup: function(req, res) {
+  getSignup: function(req, res) {
     if (req.user) return res.redirect('/');
     res.render('user/signup', { title: 'Sign Up' });
   },
 
-  createAccount: function(req, res) {
+  postSignup: function(req, res, next) {
     req.assert('username', 'Only letters and numbers are allow in username.').regexMatch(/^[A-Za-z0-9]*$/);
     req.assert('username', 'Username cannot be more than 30 characters.').len(1, 30);
     req.assert('email', 'Email is not valid.').isEmail();
@@ -78,11 +78,18 @@ module.exports = {
         req.flash('errors', { msg: 'Account with that email address already exists.' });
         return res.redirect('/signup');
       }
-      user.save(function(err) {
-        if (err) return next(err);
-        req.logIn(user, function(err) {
+      User.findOne({ uid: req.body.username.toLowerCase() }, function(err, existingUser) {
+        if (existingUser) {
+          req.flash('errors', { msg: 'Account with that username already exists.' });
+          return res.redirect('/signup');
+        }
+        user.save(function(err) {
           if (err) return next(err);
-          res.redirect('/');
+          req.logIn(user, function(err) {
+            if (err) return next(err);
+            req.flash('success', { msg: 'Success! You account has been created.' });
+            res.redirect('/');
+          });
         });
       });
     });
