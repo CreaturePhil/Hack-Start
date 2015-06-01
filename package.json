@@ -37,7 +37,6 @@
     "serve-favicon": "^2.2.1"
   },
   "devDependencies": {
-    "chai": "^2.3.0",
     "grunt": "^0.4.5",
     "grunt-cli": "^0.1.13",
     "grunt-contrib-jshint": "^0.11.2",
