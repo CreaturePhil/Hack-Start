@@ -62,7 +62,13 @@ app.use(compress());
 //app.use(favicon(path.join(__dirname, 'public/favicon.png')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(expressValidator());
+app.use(expressValidator({
+  customValidators: {
+    regexMatch: function(arg, regex) {
+      return arg.match(regex);
+    }
+  }
+}));
 app.use(methodOverride());
 app.use(session({
   resave: true,

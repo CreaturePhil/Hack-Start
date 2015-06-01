@@ -17,9 +17,14 @@ router.route('/protected')
   .get(isAuthenticated, mainController.protected);
 
 router.route('/login')
-  .get(userController.login);
+  .get(userController.login)
+  .post(userController.logIntoAccount);
+
+router.route('/logout')
+  .get(userController.logout);
 
 router.route('/signup')
-  .get(userController.signup);
+  .get(userController.signup)
+  .post(userController.createAccount);
 
 module.exports = router;
