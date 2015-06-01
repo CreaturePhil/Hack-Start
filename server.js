@@ -18,12 +18,8 @@ var path = require('path');
 var mongoose = require('mongoose');
 var session = require('express-session');
 
-var homeController = require('./controllers/home');
-var userController = require('./controllers/user');
-var contactController = require('./controllers/contact');
-
-var config = require('./config/');
-var passportConf = require('./config/passport');
+var config = require('./config');
+var routes = require('./config/routes');
 
 /**
  * Create Mongo Store.
@@ -50,11 +46,19 @@ mongoose.connection.on('error', function() {
  * App configuration.
  */
 
-app.set('port', config.port);
-app.set('views', path.join(__dirname, 'views'));
+// view engine setup
+app.set('views', path.join(__dirname, 'app/views'));
 app.set('view engine', 'jade');
+
+if (app.get('env') === 'development') {
+  // don't minify html
+  app.locals.pretty = true;
+
+  // turn on console logging
+  app.use(logger('dev'));
+}
+
 app.use(compress());
-app.use(logger('dev'));
 app.use(favicon(path.join(__dirname, 'public/favicon.png')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -63,8 +67,8 @@ app.use(methodOverride());
 app.use(session({
   resave: true,
   saveUninitialized: true,
-  secret: secrets.sessionSecret,
-  store: new MongoStore({ url: secrets.db, autoReconnect: true })
+  secret: config.sessionSecret,
+  store: new MongoStore({ url: config.db, autoReconnect: true })
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -74,37 +78,66 @@ app.use(lusca({
   xframe: 'SAMEORIGIN',
   xssProtection: true
 }));
+
+// Make local variables avaliable in templates.
 app.use(function(req, res, next) {
   res.locals.user = req.user;
   next();
 });
-app.use(express.static(path.join(__dirname, 'public')));
+
+// static cache for one week
+var week = 604800000;
+app.use(express.static(path.join(__dirname, 'public'), { maxAge: week }));
 
 /**
- * Primary app routes.
+ * Routes setup.
  */
-app.get('/', homeController.index);
-app.get('/login', userController.getLogin);
-app.post('/login', userController.postLogin);
-app.get('/logout', userController.logout);
-app.get('/forgot', userController.getForgot);
-app.post('/forgot', userController.postForgot);
-app.get('/reset/:token', userController.getReset);
-app.post('/reset/:token', userController.postReset);
-app.get('/signup', userController.getSignup);
-app.post('/signup', userController.postSignup);
-app.get('/contact', contactController.getContact);
-app.post('/contact', contactController.postContact);
-app.get('/account', passportConf.isAuthenticated, userController.getAccount);
-app.post('/account/profile', passportConf.isAuthenticated, userController.postUpdateProfile);
-app.post('/account/password', passportConf.isAuthenticated, userController.postUpdatePassword);
-app.post('/account/delete', passportConf.isAuthenticated, userController.postDeleteAccount);
+
+app.use('/', routes);
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  var err = new Error('Not Found');
+  err.status = 404;
+  next(err);
+});
+
+/**
+ * Error handlers
+ */
+
+// development error handler
+// will print stacktrace
+if (app.get('env') === 'development') {
+  app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+      message: err.message,
+      error: err
+    });
+  });
+}
+
+// production error handler
+// no stacktraces leaked to user
+if (app.get('env') === 'production') {
+  app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+      message: err.message,
+      error: {}
+    });
+  });
+}
 
 /**
  * Start Express server.
  */
-app.listen(app.get('port'), function() {
-  console.log('Express server listening on port %d in %s mode', app.get('port'), app.get('env'));
+
+app.listen(config.port, function() {
+  var env = '\n[' + chalk.green(app.get('env')) + ']';
+  var port = chalk.magenta(config.port);
+  console.log(env + ' Listening on port ' + port + '...\n');
 });
 
 module.exports = app;

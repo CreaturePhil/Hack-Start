@@ -1,13 +1,13 @@
 module.exports = {
   index: function(req, res) {
-    res.render('index', { title: 'Hack Start' });
+    res.render('main/index', { title: 'Hack Start' });
   },
 
   about: function(req, res) {
-    res.render('about', { title: 'About' });
+    res.render('main/about', { title: 'About' });
   },
 
   protected: function(req, res) {
-    res.render('protected', { title: 'Protected' });
+    res.render('main/protected', { title: 'Protected' });
   }
 };
