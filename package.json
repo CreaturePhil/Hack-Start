@@ -12,10 +12,10 @@
   "main": "server.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/creaturephil/hack-start.git"
+    "url": "https://github.com/CreaturePhil/Hack-Start.git"
   },
   "bugs": {
-    "url": "https://github.com/creaturephil/hack-start/issues"
+    "url": "https://github.com/CreaturePhil/Hack-Start/issues"
   },
   "dependencies": {
     "bcrypt-nodejs": "^0.0.3",
