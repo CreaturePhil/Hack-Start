@@ -13,7 +13,7 @@ module.exports = {
     req.assert('username', 'Only letters and numbers are allow in username.').regexMatch(/^[A-Za-z0-9]*$/);
     req.assert('username', 'Username cannot be more than 30 characters.').len(1, 30);
     req.assert('password', 'Password cannot be blank.').notEmpty();
-    
+
     var errors = req.validationErrors();
 
     if (errors) {
@@ -27,6 +27,7 @@ module.exports = {
         req.flash('errors', { msg: info.message });
         return res.redirect('/login');
       }
+
       req.logIn(user, function(err) {
         if (err) return next(err);
         req.flash('success', { msg: 'Success! You are logged in.' });
@@ -69,6 +70,7 @@ module.exports = {
         req.flash('errors', { msg: 'Account with that username already exists.' });
         return res.redirect('/signup');
       }
+
       user.save(function(err) {
         if (err) return next(err);
         req.logIn(user, function(err) {

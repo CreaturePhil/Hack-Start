@@ -6,11 +6,8 @@ var userSchema = new mongoose.Schema({
   uid: { type: String, unique: true, lowercase: true },
   username: { type: String, unique: true },
   password: String,
-  createdAt: { type: Date, default: Date.now() },
-  resetPasswordToken: String,
-  resetPasswordExpires: Date
+  createdAt: { type: Date, default: Date.now() }
 });
-
 
 /**
  * Hash the password for security.
