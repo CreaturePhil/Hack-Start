@@ -1,7 +1,7 @@
 var passport = require('passport');
 
 var User = require('../models/User');
-var config = require('../../config');
+var config = require('../config');
 
 module.exports = {
   getLogin: function(req, res) {

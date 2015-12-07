@@ -1,13 +1,13 @@
-module.exports = {
-  getIndex: function(req, res) {
+export default {
+  getIndex(req, res) {
     res.render('main/index', { title: 'Hack Start' });
   },
 
-  getAbout: function(req, res) {
+  getAbout(req, res) {
     res.render('main/about', { title: 'About' });
   },
 
-  getProtected: function(req, res) {
+  getProtected(req, res) {
     res.render('main/protected', { title: 'Protected' });
   }
 };

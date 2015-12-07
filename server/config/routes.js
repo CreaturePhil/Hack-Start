@@ -1,11 +1,11 @@
-var express = require('express');
+import express from 'express';
 
-var isAuthenticated = require('./passport').isAuthenticated;
+import { isAuthenticated } from './passport';
 
-var mainController = require('../app/controllers/main_controller');
-var userController = require('../app/controllers/user_controller');
+import mainController from '../controllers/main_controller';
+import userController from '../controllers/user_controller';
 
-var router = express.Router();
+let router = express.Router();
 
 router.route('/')
   .get(mainController.getIndex);
@@ -27,4 +27,4 @@ router.route('/signup')
   .get(userController.getSignup)
   .post(userController.postSignup);
 
-module.exports = router;
+export default router;

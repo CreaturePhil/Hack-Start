@@ -1,25 +1,21 @@
-/**
- * Module dependencies.
- */
+import bodyParser from 'body-parser';
+import chalk from 'chalk';
+import compress from 'compression';
+import connectMongo from 'connect-mongo';
+import express from 'express';
+import expressValidator from 'express-validator';
+import favicon from 'serve-favicon';
+import flash from 'express-flash';
+import logger from 'morgan';
+import lusca from 'lusca';
+import methodOverride from 'method-override';
+import passport from 'passport';
+import path from 'path';
+import mongoose from 'mongoose';
+import session from 'express-session';
 
-var bodyParser = require('body-parser');
-var chalk = require('chalk');
-var compress = require('compression');
-var connectMongo = require('connect-mongo');
-var express = require('express');
-var expressValidator = require('express-validator');
-var favicon = require('serve-favicon');
-var flash = require('express-flash');
-var logger = require('morgan');
-var lusca = require('lusca');
-var methodOverride = require('method-override');
-var passport = require('passport');
-var path = require('path');
-var mongoose = require('mongoose');
-var session = require('express-session');
-
-var config = require('./config');
-var routes = require('./config/routes');
+import config from './config';
+import routes from './config/routes';
 
 /**
  * Create Mongo Store.
@@ -38,7 +34,7 @@ var app = express();
  */
 
 mongoose.connect(config.db);
-mongoose.connection.on('error', function() {
+mongoose.connection.on('error', () => {
   console.error('MongoDB Connection Error. Please make sure that MongoDB is running.');
 });
 
@@ -47,7 +43,7 @@ mongoose.connection.on('error', function() {
  */
 
 // view engine setup
-app.set('views', path.join(__dirname, 'app/views'));
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 if (app.get('env') === 'development') {
@@ -64,7 +60,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator({
   customValidators: {
-    regexMatch: function(arg, regex) {
+    regexMatch(arg, regex) {
       return arg.match(regex);
     }
   }
@@ -86,7 +82,7 @@ app.use(lusca({
 }));
 
 // Make local variables avaliable in templates.
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
   res.locals.user = req.user;
   next();
 });
@@ -102,7 +98,7 @@ app.use(express.static(path.join(__dirname, 'public'), { maxAge: week }));
 app.use('/', routes);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
@@ -115,24 +111,20 @@ app.use(function(req, res, next) {
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
+  app.use((err, req, res, next) => {
     res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
+    const { message } = err;
+    res.render('error', { message, error: err });
   });
 }
 
 // production error handler
 // no stacktraces leaked to user
 if (app.get('env') === 'production') {
-  app.use(function(err, req, res, next) {
+  app.use((err, req, res, next) => {
     res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: {}
-    });
+    const { message } = err;
+    res.render('error', { message, error: {} });
   });
 }
 
@@ -140,10 +132,10 @@ if (app.get('env') === 'production') {
  * Start Express server.
  */
 
-app.listen(config.port, function() {
-  var env = '\n[' + chalk.green(app.get('env')) + ']';
-  var port = chalk.magenta(config.port);
-  console.log(env + ' Listening on port ' + port + '...\n');
+app.listen(config.port, () => {
+  const env = chalk.green(app.get('env'));
+  const port = chalk.magenta(config.port);
+  console.log(`\n[${env}] Listening on port ${port}...\n`);
 });
 
 module.exports = app;
