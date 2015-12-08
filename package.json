@@ -30,6 +30,7 @@
     "express-session": "^1.11.2",
     "express-validator": "^2.10.0",
     "jade": "^1.10.0",
+    "jsonwebtoken": "^5.4.1",
     "lusca": "^1.1.0",
     "method-override": "^2.3.3",
     "mongoose": "^4.0.4",

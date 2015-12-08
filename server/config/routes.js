@@ -8,7 +8,8 @@ import userController from '../controllers/user_controller';
 let router = express.Router();
 
 router.route('/')
-  .get(mainController.getIndex);
+  .get(mainController.getIndex)
+  .post(mainController.postIndex);
 
 router.route('/about')
   .get(mainController.getAbout);

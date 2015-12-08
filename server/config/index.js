@@ -3,5 +3,7 @@ export default {
 
   port: process.env.PORT || 3000,
 
-  sessionSecret: process.env.SESSION_SECRET || 'Your Session Secret goes here'
+  sessionSecret: process.env.SESSION_SECRET || 'Your Session Secret goes here',
+
+  tokenSecret: process.env.TOKEN_SECRET || 'Your Token Secret goes here'
 };

@@ -1,15 +1,14 @@
-var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
+import passport from 'passport';
+import { Strategy } from 'passport-local';
 
-var User = require('../models/User');
-var config = require('./index');
+import User from '../models/User';
+import config from './index';
+import {isValidPassword} from './auth';
 
-passport.serializeUser(function(user, done) {
-  done(null, user.id);
-});
+passport.serializeUser((user, done) => done(null, user.id));
 
-passport.deserializeUser(function(id, done) {
-  User.findById(id, function(err, user) {
+passport.deserializeUser((id, done) => {
+  User.findById(id, (err, user) => {
     done(err, user);
   });
 });
@@ -18,10 +17,10 @@ passport.deserializeUser(function(id, done) {
  * Sign in using Username and Password.
  */
 
-passport.use(new LocalStrategy({ usernameField: 'username' }, function(username, password, done) {
-  User.findOne({ uid: username.toLowerCase() }, function(err, user) {
+var mongo = new Strategy({ usernameField: 'username' }, (username, password, done) => {
+  User.findOne({ uid: username.toLowerCase() }, (err, user) => {
     if (!user) return done(null, false, { message: 'User ' + username + ' not found.' });
-    user.comparePassword(password, function(err, isMatch) {
+    user.comparePassword(password, (err, isMatch) => {
       if (isMatch) {
         return done(null, user);
       } else {
@@ -29,13 +28,25 @@ passport.use(new LocalStrategy({ usernameField: 'username' }, function(username,
       }
     });
   });
-}));
+});
+
+var user = {};
+
+var tmp = new Strategy((username, password, done) => {
+  // find user
+  if (!isValidPassword(password, user.salt, user.hash)) {
+    return done(null, false, {message: 'nope'});
+  }
+  return done(null, user);
+});
+
+passport.use(mongo);
 
 /**
  * Login Required middleware.
  */
 
-exports.isAuthenticated = function(req, res, next) {
+export function isAuthenticated(req, res, next) {
   if (req.isAuthenticated()) return next();
   res.redirect('/login');
 };

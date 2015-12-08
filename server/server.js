@@ -89,7 +89,7 @@ app.use((req, res, next) => {
 
 // static cache for one week
 var week = 604800000;
-app.use(express.static(path.join(__dirname, 'public'), { maxAge: week }));
+app.use(express.static(path.join(__dirname, '..', 'public'), { maxAge: week }));
 
 /**
  * Routes setup.
