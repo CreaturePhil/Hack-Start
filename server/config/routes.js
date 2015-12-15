@@ -7,8 +7,6 @@ import userController from '../controllers/user_controller';
 import config from '../config';
 import jwt from 'express-jwt';
 
-const isAuth =  jwt({secret: config.tokenSecret})
-
 let router = express.Router();
 
 router.route('/')
@@ -18,7 +16,7 @@ router.route('/about')
   .get(mainController.getAbout);
 
 router.route('/protected')
-  .get(isAuth, mainController.getProtected);
+  .get(isAuthenticated, mainController.getProtected);
 
 router.route('/login')
   .get(userController.getLogin)

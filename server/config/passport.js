@@ -3,7 +3,6 @@ import { Strategy } from 'passport-local';
 
 import config from './index';
 import crypto from 'crypto';
-import jwt from 'jsonwebtoken';
 import query from '../query';
 import User from '../models/User';
 
@@ -11,7 +10,7 @@ const findUserByIdQuery = `SELECT * FROM users WHERE id = $1`;
 const findUserByUsernameIdQuery = `SELECT * FROM users WHERE uid = $1`;
 
 /**
- * JWT authetication helper functions.
+ * Authetication helper functions.
  */
 
 export function createSalt() {
@@ -26,19 +25,6 @@ export function isValidPassword(password, salt, userHash) {
   const hash = createHash(password, salt);
 
   return userHash === hash;
-};
-
-export function generateJWT(user) {
-  // set expiration to 60 days
-  const today = new Date();
-  const exp = new Date(today).setDate(today.getDate() + 60);
-  const payload = {
-    id: user.id,
-    username: user.username,
-    exp: parseInt(exp / 1000),
-  };
-
-  return jwt.sign(payload, config.tokenSecret);
 };
 
 passport.serializeUser((user, done) => done(null, user.id));
@@ -76,16 +62,6 @@ export function isAuthenticated(req, res, next) {
   if (req.isAuthenticated()) return next();
   res.redirect('/login');
 };
-
-var user = {};
-
-var tmp = new Strategy((username, password, done) => {
-  // find user
-  if (!isValidPassword(password, user.salt, user.hash)) {
-    return done(null, false, {message: 'nope'});
-  }
-  return done(null, user);
-});
 
 /**
  * Sign in using Username and Password.

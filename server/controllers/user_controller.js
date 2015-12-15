@@ -19,26 +19,6 @@ module.exports = {
     var errors = req.validationErrors();
 
     if (errors) {
-      return res.status(400).json(errors);
-    }
-
-    passport.authenticate('local', (err, user, info) => {
-      if (err) return next(err);
-      if (!user) {
-        return res.status(401).json(info);
-      }
-
-      const token = generateJWT({
-        id: user.id,
-        username: user.username
-      });
-
-      return res.json({ token });
-    })(req, res, next);
-
-    return;
-
-    if (errors) {
       req.flash('errors', errors);
       return res.redirect('/login');
     }
@@ -77,7 +57,8 @@ module.exports = {
     var errors = req.validationErrors();
 
     if (errors) {
-       return res.status(400).json(errors);
+      req.flash('errors', errors);
+      return res.redirect('/signup');
     }
 
     const findUserByUsernameIdQuery = `SELECT * FROM users WHERE uid = $1`;
@@ -98,43 +79,14 @@ module.exports = {
           query(insertUserQuery, [uid, req.body.username, salt, hash, new Date()])
             .then(() => query(findUserByUsernameIdQuery, [uid]))
             .then(results => {
-              const token = generateJWT({
-                id: results[0].id,
-                username: results[0].username
+              req.logIn(results[0], function(err) {
+                if (err) return next(err);
+                req.flash('success', { msg: 'Success! You account has been created.' });
+                res.redirect('/');
               });
-              res.json({ token });
             })
             .catch(err => console.error(err));
       })
       .catch(err => console.error(err));
-
-    return;
-
-    if (errors) {
-      req.flash('errors', errors);
-      return res.redirect('/signup');
-    }
-
-    var user = new User({
-      uid: req.body.username.toLowerCase(),
-      username: req.body.username,
-      password: req.body.password
-    });
-
-    User.findOne({ uid: req.body.username.toLowerCase() }, function(err, existingUser) {
-      if (existingUser) {
-        req.flash('errors', { msg: 'Account with that username already exists.' });
-        return res.redirect('/signup');
-      }
-
-      user.save(function(err) {
-        if (err) return next(err);
-        req.logIn(user, function(err) {
-          if (err) return next(err);
-          req.flash('success', { msg: 'Success! You account has been created.' });
-          res.redirect('/');
-        });
-      });
-    });
   }
 };

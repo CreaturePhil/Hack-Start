@@ -1,7 +1,6 @@
 import bodyParser from 'body-parser';
 import chalk from 'chalk';
 import compress from 'compression';
-import connectMongo from 'connect-mongo';
 import express from 'express';
 import expressValidator from 'express-validator';
 import favicon from 'serve-favicon';
@@ -11,18 +10,11 @@ import lusca from 'lusca';
 import methodOverride from 'method-override';
 import passport from 'passport';
 import path from 'path';
-import mongoose from 'mongoose';
 import session from 'express-session';
 
 import config from './config';
 import routes from './config/routes';
 import query from './query';
-
-/**
- * Create Mongo Store.
- */
-
-var MongoStore = connectMongo(session);
 
 /**
  * Create Express server.
@@ -45,15 +37,6 @@ const createUsersTableQuery =
   )`;
 
 query(createUsersTableQuery).catch(err => console.error(err));
-
-/**
- * Connect to MongoDB.
- */
-
-mongoose.connect(config.db);
-mongoose.connection.on('error', () => {
-  console.error('MongoDB Connection Error. Please make sure that MongoDB is running.');
-});
 
 /**
  * App configuration.
@@ -87,7 +70,7 @@ app.use(session({
   resave: true,
   saveUninitialized: true,
   secret: config.sessionSecret,
-  store: new MongoStore({ url: config.db, autoReconnect: true })
+  //store: new MongoStore({ url: config.db, autoReconnect: true })
 }));
 app.use(passport.initialize());
 app.use(passport.session());
