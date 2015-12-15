@@ -5,5 +5,7 @@ export default {
 
   sessionSecret: process.env.SESSION_SECRET || 'Your Session Secret goes here',
 
-  tokenSecret: process.env.TOKEN_SECRET || 'Your Token Secret goes here'
+  tokenSecret: process.env.TOKEN_SECRET || 'Your Token Secret goes here',
+
+  connectionString: process.env.DATABASE_URL || 'postgres://username:password@localhost/database'
 };

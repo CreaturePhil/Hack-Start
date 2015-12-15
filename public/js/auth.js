@@ -31,7 +31,7 @@
     var data = $(this).serialize();
     console.log(data);
     $.ajax({
-      url: '/',
+      url: $(this).attr('action'),
       type: 'POST',
       data: data,
       dataType: 'json',

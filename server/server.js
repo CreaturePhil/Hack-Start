@@ -16,6 +16,7 @@ import session from 'express-session';
 
 import config from './config';
 import routes from './config/routes';
+import query from './query';
 
 /**
  * Create Mongo Store.
@@ -28,6 +29,22 @@ var MongoStore = connectMongo(session);
  */
 
 var app = express();
+
+/**
+ * Create PostgresSQL users table.
+ */
+
+const createUsersTableQuery =
+  `CREATE TABLE IF NOT EXISTS users (
+    id serial PRIMARY KEY,
+    uid varchar(19) NOT NULL UNIQUE,
+    username varchar(19) NOT NULL UNIQUE,
+    salt varchar(32),
+    hash varchar(128),
+    join_date date
+  )`;
+
+query(createUsersTableQuery).catch(err => console.error(err));
 
 /**
  * Connect to MongoDB.

@@ -4,18 +4,21 @@ import { isAuthenticated } from './passport';
 
 import mainController from '../controllers/main_controller';
 import userController from '../controllers/user_controller';
+import config from '../config';
+import jwt from 'express-jwt';
+
+const isAuth =  jwt({secret: config.tokenSecret})
 
 let router = express.Router();
 
 router.route('/')
-  .get(mainController.getIndex)
-  .post(mainController.postIndex);
+  .get(mainController.getIndex);
 
 router.route('/about')
   .get(mainController.getAbout);
 
 router.route('/protected')
-  .get(isAuthenticated, mainController.getProtected);
+  .get(isAuth, mainController.getProtected);
 
 router.route('/login')
   .get(userController.getLogin)
