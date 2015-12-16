@@ -32,3 +32,11 @@ describe('GET /protected', () => {
       .expect(302, done);
   });
 });
+
+describe('GET /404', () => {
+  it('should return 404 Not Found', (done) => {
+    request(app)
+      .get('/404')
+      .expect(404, done);
+  });
+});

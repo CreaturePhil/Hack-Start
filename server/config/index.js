@@ -1,5 +1,5 @@
 export default {
-  connectionString: process.env.DATABASE_URL || 'postgres://postgres:password@localhost/database',
+  connectionString: process.env.DATABASE_URL || 'postgres://username:password@localhost/database',
 
   mongodb: process.env.MONGODB || 'mongodb://localhost:27017/test',
 

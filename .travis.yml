@@ -4,6 +4,7 @@ node_js:
   - '0.12'
   - 'stable'
 services:
+  - mongodb
   - postgresql
 before_script:
   - psql -c 'CREATE DATABASE database;' -U postgres
