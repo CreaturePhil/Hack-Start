@@ -11,7 +11,7 @@ A boilerplate for Node.js web applications.
 ```bash
 $ git clone https://github.com/CreaturePhil/Hack-Start.git && cd Hack-Start
 $ npm install
-$ node server.js
+$ npm start
 ```
 
 ## License
