@@ -1,6 +1,7 @@
 import bodyParser from 'body-parser';
 import chalk from 'chalk';
 import compress from 'compression';
+import connectMongo from 'connect-mongo';
 import express from 'express';
 import expressValidator from 'express-validator';
 import favicon from 'serve-favicon';
@@ -10,6 +11,7 @@ import lusca from 'lusca';
 import methodOverride from 'method-override';
 import passport from 'passport';
 import path from 'path';
+import pg from 'pg';
 import session from 'express-session';
 
 import config from './config';
@@ -20,7 +22,13 @@ import query from './query';
  * Create Express server.
  */
 
-var app = express();
+const app = express();
+
+/**
+ * Create Mongo store.
+ */
+
+const MongoStore = connectMongo(session);
 
 /**
  * Create PostgresSQL users table.
@@ -69,8 +77,9 @@ app.use(methodOverride());
 app.use(session({
   resave: true,
   saveUninitialized: true,
-  secret: config.sessionSecret
-}));
+  secret: config.sessionSecret,
+  store: new MongoStore({ url: config.mongodb, autoReconnect: true })
+}))
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
@@ -82,6 +91,7 @@ app.use(lusca({
 
 // Make local variables avaliable in templates.
 app.use((req, res, next) => {
+  console.log(req.user);
   res.locals.user = req.user;
   next();
 });

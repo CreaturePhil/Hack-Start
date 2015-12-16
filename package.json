@@ -24,6 +24,8 @@
     "body-parser": "^1.12.4",
     "chalk": "^1.0.0",
     "compression": "^1.4.4",
+    "connect-mongo": "^0.8.2",
+    "connect-pg-simple": "^3.1.0",
     "express": "^4.12.4",
     "express-flash": "^0.0.2",
     "express-session": "^1.11.2",
@@ -32,7 +34,7 @@
     "lusca": "^1.1.0",
     "method-override": "^2.3.3",
     "morgan": "^1.5.3",
-    "passport": "^0.2.1",
+    "passport": "^0.3.2",
     "passport-local": "^1.0.0",
     "pg": "^4.4.3",
     "serve-favicon": "^2.2.1"
