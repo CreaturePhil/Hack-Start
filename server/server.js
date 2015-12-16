@@ -91,7 +91,6 @@ app.use(lusca({
 
 // Make local variables avaliable in templates.
 app.use((req, res, next) => {
-  console.log(req.user);
   res.locals.user = req.user;
   next();
 });
