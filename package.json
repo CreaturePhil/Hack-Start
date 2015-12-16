@@ -5,8 +5,6 @@
   "author": "Philip La <birkal@outlook.com>",
   "scripts": {
     "start": "node server",
-    "coverage": "istanbul cover node_modules/mocha/bin/_mocha -- -R spec --compilers js:babel-register --recursive --timeout=10000",
-    "test-ci": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter spec --compilers js:babel-register --recursive --timeout=10000",
     "test": "mocha --compilers js:babel-register --recursive --timeout=10000"
   },
   "main": "server.js",
@@ -39,7 +37,6 @@
     "serve-favicon": "^2.2.1"
   },
   "devDependencies": {
-    "istanbul": "^0.3.14",
     "mocha": "^2.2.5",
     "supertest": "^1.0.1"
   },
