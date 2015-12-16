@@ -1,8 +1,6 @@
-import config from '../config';
+import { createSalt, createHash } from '../config/passport';
 import passport from 'passport';
 import query from '../query';
-import { createSalt, createHash } from '../config/passport';
-
 
 module.exports = {
   getLogin(req, res) {
@@ -37,13 +35,13 @@ module.exports = {
     })(req, res, next);
   },
 
-  getLogout: function(req, res) {
+  getLogout(req, res) {
     req.logout();
     req.flash('success', { msg: 'Success! You are logged out.' });
     res.redirect('/login');
   },
 
-  getSignup: function(req, res) {
+  getSignup(req, res) {
     if (req.user) return res.redirect('/');
     res.render('user/signup', { title: 'Sign Up' });
   },
@@ -78,16 +76,6 @@ module.exports = {
         }
 
         return createHash(req.body.password, salt);
-        /*query(insertUserQuery, [uid, req.body.username, salt, hash, new Date()])
-        .then(() => query(findUserByUsernameIdQuery, [uid]))
-        .then(results => {
-          req.logIn(results[0], function(err) {
-            if (err) return next(err);
-            req.flash('success', { msg: 'Success! You account has been created.' });
-            res.redirect('/');
-          });
-        })
-        .catch(err => console.error(err));*/
       })
       .then(hash => query(insertUserQuery, [uid, req.body.username, salt, hash, new Date()]))
       .then(() => query(findUserByUsernameIdQuery, [uid]))
