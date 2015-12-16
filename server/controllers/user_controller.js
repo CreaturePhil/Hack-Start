@@ -13,7 +13,7 @@ module.exports = {
     req.assert('username', 'Username cannot be more than 30 characters.').len(1, 30);
     req.assert('password', 'Password cannot be blank.').notEmpty();
 
-    var errors = req.validationErrors();
+    const errors = req.validationErrors();
 
     if (errors) {
       req.flash('errors', errors);
@@ -51,7 +51,7 @@ module.exports = {
     req.assert('username', 'Username cannot be more than 30 characters.').len(1, 30);
     req.assert('password', 'Password must be at least 4 characters long.').len(4);
 
-    var errors = req.validationErrors();
+    const errors = req.validationErrors();
 
     if (errors) {
       req.flash('errors', errors);

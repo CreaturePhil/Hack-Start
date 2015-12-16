@@ -96,7 +96,7 @@ app.use((req, res, next) => {
 });
 
 // static cache for one week
-var week = 604800000;
+const week = 604800000;
 app.use(express.static(path.join(__dirname, '..', 'public'), { maxAge: week }));
 
 /**
@@ -107,7 +107,7 @@ app.use('/', routes);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
-  var err = new Error('Not Found');
+  const err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
