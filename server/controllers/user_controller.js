@@ -1,7 +1,7 @@
 import config from '../config';
 import passport from 'passport';
 import query from '../query';
-import { createSalt, createHash, generateJWT } from '../config/passport';
+import { createSalt, createHash } from '../config/passport';
 
 var User = require('../models/User');
 
@@ -67,25 +67,37 @@ module.exports = {
       VALUES ($1, $2, $3, $4, $5)`;
 
     const salt = createSalt();
-    const hash = createHash(req.body.password, salt);
     const uid = req.body.username.toLowerCase();
 
-    query(findUserByUsernameIdQuery, [req.body.username.toLowerCase()])
+    query(findUserByUsernameIdQuery, [uid])
       .then(results => {
-          if (results.length) {
-            return res.status(400).json({ msg: 'Account with that username already exists.' });
-          }
+        if (results.length) {
+          const msg = 'Account with that username already exists.';
+          req.flash('errors', { msg });
+          res.redirect('/signup');
+          throw new Error(msg);
+        }
 
-          query(insertUserQuery, [uid, req.body.username, salt, hash, new Date()])
-            .then(() => query(findUserByUsernameIdQuery, [uid]))
-            .then(results => {
-              req.logIn(results[0], function(err) {
-                if (err) return next(err);
-                req.flash('success', { msg: 'Success! You account has been created.' });
-                res.redirect('/');
-              });
-            })
-            .catch(err => console.error(err));
+        return createHash(req.body.password, salt);
+        /*query(insertUserQuery, [uid, req.body.username, salt, hash, new Date()])
+        .then(() => query(findUserByUsernameIdQuery, [uid]))
+        .then(results => {
+          req.logIn(results[0], function(err) {
+            if (err) return next(err);
+            req.flash('success', { msg: 'Success! You account has been created.' });
+            res.redirect('/');
+          });
+        })
+        .catch(err => console.error(err));*/
+      })
+      .then(hash => query(insertUserQuery, [uid, req.body.username, salt, hash, new Date()]))
+      .then(() => query(findUserByUsernameIdQuery, [uid]))
+      .then(results => {
+        req.logIn(results[0], (err) => {
+          if (err) return next(err);
+          req.flash('success', { msg: 'Success! You account has been created.' });
+          res.redirect('/');
+        });
       })
       .catch(err => console.error(err));
   }

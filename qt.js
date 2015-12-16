@@ -1,15 +1,14 @@
 import query from './server/query';
 import {createSalt, createHash} from './server/config/passport';
-console.log(createSalt().length);
-console.log(createHash('asdaasdasdkasljdasd', createSalt()).length)
-console.log('hi')
 query(`SELECT * FROM hoes`)
 .then(result => {
   console.log('PASS')
+  throw new Error();
   console.log(result);
   return null;
 })
-.then(() => {
+.then((hi) => {
+  console.log(hi)
   console.log('hi')
 })
 .catch(err => {

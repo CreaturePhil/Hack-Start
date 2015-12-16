@@ -2,9 +2,10 @@ import passport from 'passport';
 import { Strategy } from 'passport-local';
 
 import config from './index';
-import crypto from 'crypto';
+import {randomBytes, pbkdf2} from 'crypto';
 import query from '../query';
 import User from '../models/User';
+import Promise from 'bluebird';
 
 const findUserByIdQuery = `SELECT * FROM users WHERE id = $1`;
 const findUserByUsernameIdQuery = `SELECT * FROM users WHERE uid = $1`;
@@ -13,18 +14,23 @@ const findUserByUsernameIdQuery = `SELECT * FROM users WHERE uid = $1`;
  * Authetication helper functions.
  */
 
-export function createSalt() {
-  return crypto.randomBytes(16).toString('hex');
+export const createSalt = () => randomBytes(32).toString('hex');
+
+export const createHash = (password, salt) => {
+  return new Promise((resolve, reject) => {
+    pbkdf2(password, salt, 100000, 512, (err, key) => {
+      if (err) return reject(err);
+
+      const hash = key.toString('hex');
+      resolve(hash);
+    });
+  });
 };
 
-export function createHash(password, salt) {
-  return crypto.pbkdf2Sync(password, salt, 1000, 64).toString('hex');
-};
-
-export function isValidPassword(password, salt, userHash) {
-  const hash = createHash(password, salt);
-
-  return userHash === hash;
+export const isValidPassword = (password, salt, userHash) => {
+  return new Promise((resolve, reject) => {
+    createHash(password, salt).then(hash => resolve(hash === userHash));
+  });
 };
 
 passport.serializeUser((user, done) => done(null, user.id));
@@ -76,11 +82,14 @@ passport.use(new Strategy((username, password, done) => {
 
       const user = results[0];
 
-      if (!isValidPassword(password, user.salt, user.hash)) {
-        return done(null, false, { message: 'Invalid username or password.' });
-      }
-
-      done(null, user);
+      isValidPassword(password, user.salt, user.hash)
+        .then(valid => {
+          if (!valid) {
+            done(null, false, { message: 'Invalid username or password.' });
+          } else {
+            done(null, user);
+          }
+        });
     })
     .catch(err => console.error(err));
 }));

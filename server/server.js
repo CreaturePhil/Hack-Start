@@ -31,8 +31,8 @@ const createUsersTableQuery =
     id serial PRIMARY KEY,
     uid varchar(19) NOT NULL UNIQUE,
     username varchar(19) NOT NULL UNIQUE,
-    salt varchar(32),
-    hash varchar(128),
+    salt varchar(64),
+    hash varchar(1024),
     join_date date
   )`;
 
