@@ -3,7 +3,6 @@ import passport from 'passport';
 import query from '../query';
 import { createSalt, createHash } from '../config/passport';
 
-var User = require('../models/User');
 
 module.exports = {
   getLogin(req, res) {
