@@ -1,14 +1,26 @@
+import Promise from 'bluebird';
 import passport from 'passport';
 import { Strategy } from 'passport-local';
+import { randomBytes, pbkdf2 } from 'crypto';
 
-import config from './index';
-import {randomBytes, pbkdf2} from 'crypto';
 import query from '../query';
-import User from '../models/User';
-import Promise from 'bluebird';
 
 const findUserByIdQuery = `SELECT * FROM users WHERE id = $1`;
 const findUserByUsernameIdQuery = `SELECT * FROM users WHERE uid = $1`;
+
+/**
+ * Handling sessions.
+ */
+
+passport.serializeUser((user, done) => done(null, user.id));
+
+passport.deserializeUser((id, done) => {
+  query(findUserByIdQuery, [id])
+    .then(results => {
+      done(null, results[0]);
+    })
+    .catch(err => console.error(err));
+});
 
 /**
  * Authetication helper functions.
@@ -33,38 +45,11 @@ export const isValidPassword = (password, salt, userHash) => {
   });
 };
 
-passport.serializeUser((user, done) => done(null, user.id));
-
-passport.deserializeUser((id, done) => {
-  query(findUserByIdQuery, [id])
-    .then(results => {
-      done(null, results[0]);
-    })
-    .catch(err => console.error(err));
-});
-
-/**
- * Sign in using Username and Password.
- */
-
-var mongo = new Strategy({ usernameField: 'username' }, (username, password, done) => {
-  User.findOne({ uid: username.toLowerCase() }, (err, user) => {
-    if (!user) return done(null, false, { message: 'User ' + username + ' not found.' });
-    user.comparePassword(password, (err, isMatch) => {
-      if (isMatch) {
-        return done(null, user);
-      } else {
-        return done(null, false, { message: 'Invalid username or password.' });
-      }
-    });
-  });
-});
-
 /**
  * Login Required middleware.
  */
 
-export function isAuthenticated(req, res, next) {
+export const isAuthenticated = (req, res, next) => {
   if (req.isAuthenticated()) return next();
   res.redirect('/login');
 };

@@ -69,8 +69,7 @@ app.use(methodOverride());
 app.use(session({
   resave: true,
   saveUninitialized: true,
-  secret: config.sessionSecret,
-  //store: new MongoStore({ url: config.db, autoReconnect: true })
+  secret: config.sessionSecret
 }));
 app.use(passport.initialize());
 app.use(passport.session());

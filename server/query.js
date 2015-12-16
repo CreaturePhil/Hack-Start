@@ -1,5 +1,6 @@
-import pg from 'pg';
 import Promise from 'bluebird';
+import pg from 'pg';
+
 import config from './config';
 
 export default function query(queryText, values = []) {

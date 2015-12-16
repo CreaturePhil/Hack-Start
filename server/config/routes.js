@@ -4,10 +4,8 @@ import { isAuthenticated } from './passport';
 
 import mainController from '../controllers/main_controller';
 import userController from '../controllers/user_controller';
-import config from '../config';
-import jwt from 'express-jwt';
 
-let router = express.Router();
+const router = express.Router();
 
 router.route('/')
   .get(mainController.getIndex);
